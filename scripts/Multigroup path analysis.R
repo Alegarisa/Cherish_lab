@@ -25,7 +25,7 @@ library(afex)
 library(sjPlot)
 library(jtools)
 library(lavaan)
-#library(semPlot)
+library(semPlot)
 library(lavaanPlot)
 
 
@@ -54,27 +54,6 @@ gpa<-sem(a, data=pa2, estimator ="MLMV", se = "robust", group = "back_migration"
 summary(gpa, fit.measures=T, standardized=T, rsquare=T)
 
 
-
-
-#Prueba con AUDIT_C
-p<-"
-  #Variables endógenas
-    AUDIT_C ~ b1*FPINT + b2*FRFC + PSS + income_mx
-    
-  #Variables mediadoras
-    FPINT ~ a1*PSS + a11*income_mx
-    FRFC ~ a2*PSS + a22*income_mx
-
-  #Covarianzas
-  PSS ~~ income_mx
-  FPINT ~~ FRFC
-  
-  #Indirectos
-  incINT := a11*b1
-  incCON := a22*b2
-  pssINT := a1*b1
-  pssCON := a2*b2
-"
 
 #Modelo con multigroup path name
 p<-"
@@ -133,18 +112,7 @@ summary(gpa, fit.measures=T, standardized=T, rsquare=T)
 
 parameters::model_parameters(gpa, component = c("regression", "residual"))
 
-# semPaths(gpa, whatLabels = "std", style = "ram", edge.label.cex = 1.5, sizeMan = 8,
-#             edge.color = ifelse(parameters::model_parameters(gpa, ci=0.95, component = c("regression", "residual"))$pd > .9,
-#                                 "black", "gray90"), label.prop = 0.9, layout = "tree2", rotation = 2, nCharNodes = 0, residuals = F, 
-#             intercepts = F, rescale=T)
-
-lavaanPlot(model = gpa,
-           coefs = TRUE,              # Shows coefficients on arrows
-           stand = TRUE,              # Standardized coefficients
-           covs = TRUE,               # Show covariances if present
-           sig = .05,                 # Only bold significant paths at p < .05
-           edge_options = list(fontsize = 12),  # Adjust edge label size
-           node_options = list(fontsize = 14, shape = "box"), # Node style
-           graph_options = list(rankdir = "TB") # Layout (TB = top-bottom tree)
-)
-
+semPaths(gpa, whatLabels = "std", style = "ram", edge.label.cex = 1.5, sizeMan = 8,
+            edge.color = ifelse(parameters::model_parameters(gpa, ci=0.95, component = c("regression", "residual"))$pd > .9,
+                                "black", "gray90"), label.prop = 0.9, layout = "tree2", rotation = 2, nCharNodes = 0, residuals = F,
+            intercepts = F, rescale=T)
